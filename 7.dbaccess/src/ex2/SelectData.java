@@ -14,39 +14,31 @@ public class SelectData {
         String user = "postgres";
         String passward = "postgres";
 
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        String sql = null;
+        String sql = """
+                SELECT
+                m.name AS member_name
+                ,birth_day
+                ,gender
+                ,c.name AS color_name
+                FROM
+                members AS m
+                LEFT JOIN
+                colors AS c
+                ON
+                m.color_id = c.id
+                ORDER BY
+                m.id
+                ;
+                """;
 
-        try {
-            con = DriverManager.getConnection(url, user, passward);
-            sql = """
-                    SELECT
-                    m.name AS member_name
-                    ,birth_day
-                    ,gender
-                    ,c.name AS color_name
-                    FROM
-                    members AS m
-                    LEFT JOIN
-                    colors AS c
-                    ON
-                    m.color_id = c.id
-                    ORDER BY
-                    m.id
-                    ;
-                    """;
-
-                    
-
-
-            pstmt = con.prepareStatement(sql);
-            rs = pstmt.executeQuery();
+        try (
+            Connection con = DriverManager.getConnection(url, user, passward);
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            ) {
 
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             System.out.println("name     birth_day     gender     color_name" );
-
 
             while (rs.next()) {
                 String name = rs.getString("member_name");
@@ -58,20 +50,6 @@ public class SelectData {
         } catch (SQLException e) {
             System.err.println("SQL : " + sql);
             e.printStackTrace();
-        } finally {
-            try {
-                if (con != null) {
-                    con.close();
-                }
-                if (pstmt != null) {
-                    pstmt.close();
-                }
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         //初級課題

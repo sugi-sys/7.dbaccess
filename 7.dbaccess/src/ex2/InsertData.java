@@ -11,17 +11,30 @@ public class InsertData {
         String user = "postgres";
         String passward = "postgres";
 
-        String sql = null;
+        String sql = """
+            INSERT INTO
+            members
+            (
+                name
+                ,birth_day
+                ,gender
+                ,color_id
+            )
+            VALUES
+            (
+                '松本 潤'
+                ,'1983-08-30'
+                ,'男'
+                ,5
+            )
+            ;
 
+                """;
 
         try (
             Connection con = DriverManager.getConnection(url, user, passward);
             PreparedStatement pstmt = con.prepareStatement(sql);
             ) {
-            sql = """
-
-                    """;
-            
             int num = pstmt.executeUpdate();
 
             System.out.println("操作した件数：" + num);
