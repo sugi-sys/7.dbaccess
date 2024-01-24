@@ -23,8 +23,6 @@ public class Transaction {
                 id = 1
                 ;
                 """;
-        // トランザクション処理を入れる場合、SQLでBEGIN/COMMITを直打ちしても実装可能だが、
-        // 冗長なコードになるため、Connectionインターフェース側で制御したほうが無難
         try (
             Connection con = DriverManager.getConnection(url, user, passward);
         ) {
