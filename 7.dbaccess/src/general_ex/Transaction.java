@@ -1,30 +1,28 @@
-package ex2;
+package general_ex;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-        //意図的にロールバックさせてみる
-
-
-public class Transaction2 {
+public class Transaction {
     public static void main(String[] args) {
         String url = "jdbc:postgresql://localhost:5432/student";
         String user = "postgres";
         String passward = "postgres";
 
-
-        // DELETEを1回行い、その後故意にSQLExceptionを発生させてロールバックを強制する
         String sql = """
-                DELETE FROM
+                UPDATE
                 members
+                SET
+                name = '山田 太郎'
+                ,birth_day = '1998-11-30'
+                ,gender = '男'
+                ,color_id = 6
                 WHERE
-                name = '松本 潤'
+                id = 1
                 ;
                 """;
-
-        // Connectionインターフェース側でトランザクションを制御する
         try (
             Connection con = DriverManager.getConnection(url, user, passward);
         ) {
@@ -37,14 +35,9 @@ public class Transaction2 {
             ) {
                 int num = pstmt.executeUpdate();
                 System.out.println("操作した件数：" + num);
-
-                if (num == 1) {
-                    throw new SQLException();
-                }
                 con.commit();
             } catch (SQLException e) {
                 con.rollback();
-                System.err.println("ロールバックしました。");
                 e.printStackTrace();
             }
             
